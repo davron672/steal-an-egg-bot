@@ -1,33 +1,39 @@
 import os
-import requests
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+
+TOKEN = os.environ.get("TELEGRAM_TOKEN")
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "🥚 Steal a Egg Notifier запущен!\n\n"
-        "Я буду отправлять уведомления о редких яйцах."
+        "🥚 Steal An Egg Notifier запущен!\n\n"
+        "Я готов получать уведомления."
     )
+
 
 async def status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "📊 Статистика пока собирается.\n"
-        "Когда появятся данные, здесь будет показан примерный интервал и частота."
+        "📊 Статистика пока собирается."
     )
 
+
 def main():
-    if not TELEGRAM_TOKEN:
-        raise RuntimeError("TELEGRAM_TOKEN не установлен")
+    if not TOKEN:
+        raise RuntimeError("TELEGRAM_TOKEN не найден в Environment Variables")
 
-    app = Application.builder().token(TELEGRAM_TOKEN).build()
+    application = Application.builder().token(TOKEN).build()
 
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("status", status))
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("status", status))
 
-    print("Bot started")
-    app.run_polling()
+    print("Bot started successfully")
+
+    application.run_polling(
+        allowed_updates=Update.ALL_TYPES
+    )
+
 
 if __name__ == "__main__":
     main()
